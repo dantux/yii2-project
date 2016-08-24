@@ -1,20 +1,20 @@
 <?php
 
-use \Yii;
+use Yii;
 
 namespace dantux\helpers;
 
 class Text
 {
-    public static function size_as_text($size) {
+    public static function bytesToHumanSize($size) {
         if($size < 1024) {
-            $text = $size . " B";
-        } elseif (($size >= 1024) || ($size < 1048576)) {
-            $text =  round($size/1024) . " KB";
-        } elseif ($size >= 1048576) {
-            $text =  round($size/1048576) . " MB";
+            $text = number_format($size, 2) . " B";
+        } elseif (($size >= 1024) && ($size < 1048576)) {
+            $text =  number_format($size/1024, 2) . " KB";
+        } elseif (($size >= 1048576) && ($size < 1073741824)) {
+            $text =  number_format($size/1048576, 2) . " MB";
         } elseif ($size >= 1073741824) {
-            $text =  round($size/1073741824) . " GB";
+            $text =  number_format($size/1073741824, 2) . " GB";
         }
         return $text;
 
