@@ -2,7 +2,7 @@
 
 use \Yii;
 
-namespace dantux\project\helpers;
+namespace dantux\helpers;
 
 class DateTime
 {

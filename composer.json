@@ -14,10 +14,11 @@
     ],
     "minimum-stability": "stable",
     "require": {
+         "yiisoft/yii2": "*"
     },
     "autoload": {
-        "psr-0": {
-            "dantux\\project\\": ""
+        "psr-4": {
+            "dantux\\": ""
         }
     }
 }

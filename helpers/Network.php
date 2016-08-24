@@ -2,10 +2,10 @@
 
 use \Yii;
 
-namespace dantux\project\helpers;
+namespace dantux\helpers;
 
 
-class My
+class Network
 {
 
     public static function ip_info($address = 'google.com')
@@ -16,7 +16,7 @@ class My
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec ($curl);
         curl_close ($curl);
-        if(\common\helpers\My::isJson($result))
+        if(dantux\helpers\Text::isJson($result))
         {
             return json_decode($result);
             /*
