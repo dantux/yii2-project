@@ -44,4 +44,81 @@ class Network
             return json_decode($not_found);
         }
     }
+
+	// Function to check response time
+	public static function pingDomain($domain, $port, $timeout, $log_output = 'none'){
+		$client_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'none';
+		$time_now = date('H:i:s');
+		$starttime = microtime(true);
+		$file      = fsockopen ($domain, $port, $errno, $errstr, $timeout);
+		$stoptime  = microtime(true);
+		$status    = 0;
+
+		if (!$file) $status = -1;  // Site is down
+		else {
+			fclose($file);
+			$status = ($stoptime - $starttime) * 1000;
+			$status = floor($status);
+		}
+		$ok_message = "{$time_now} | tcp/$port ping OK for $domain response time={$status} ms\r\n";
+		$not_ok_message = "{$time_now} | tcp packet on [$domain]:{$port} didn't make it back in {$timeout} seconds\r\n";
+
+		switch($log_output)
+		{
+			case 'all':
+				chdir(dirname(__FILE__));
+				chdir('..' . DIRECTORY_SEPARATOR . 'logs');
+				$log_file = fopen(date('Y-m-d') . '_' . $client_ip . '_all.log', 'a+') or die ("can't create log file");
+				if($status != -1)
+				{
+					echo $ok_message;
+					fwrite($log_file, $ok_message);
+					fclose($log_file);
+				}
+				else
+				{
+					echo $not_ok_message;
+					fwrite($log_file, $not_ok_message);
+					fclose($log_file);
+				}
+				break;
+			case 'errors':
+				chdir(dirname(__FILE__));
+				chdir('..' . DIRECTORY_SEPARATOR . 'logs');
+				$log_file = fopen(date('Y-m-d') . '_' . $client_ip . '_errors.log', 'a+') or die ("can't create log file");
+				if($status != -1)
+					echo $ok_message;
+				else
+				{
+					echo $not_ok_message;
+					fwrite($log_file, $not_ok_message);
+					fclose($log_file);
+				}
+				break;
+			case 'none':
+			default:
+				if($status != -1)
+					echo $ok_message;
+				else
+					echo $not_ok_message;
+		}
+	}
+
+	public static function remoteResponds($domain, $port, $timeout){
+		$client_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'none';
+		$time_now = date('H:i:s');
+		$starttime = microtime(true);
+		$file      = fsockopen ($domain, $port, $errno, $errstr, $timeout);
+		$stoptime  = microtime(true);
+		$status    = 0;
+
+		if (!$file) $status = -1;  // Site is down
+		else {
+			fclose($file);
+			$status = ($stoptime - $starttime) * 1000;
+			$status = floor($status);
+		}
+
+        return $status > -1 ? false : true;
+	}
 }
