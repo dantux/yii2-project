@@ -1,7 +1,5 @@
 <?php
 
-use \Yii;
-
 namespace dantux\helpers;
 
 
@@ -104,21 +102,24 @@ class Network
 		}
 	}
 
-	public static function remoteResponds($domain, $port, $timeout){
-		$client_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'none';
-		$time_now = date('H:i:s');
+	public static function remoteResponds($domain, int $port = 80, $timeout = 10){
 		$starttime = microtime(true);
-		$file      = fsockopen ($domain, $port, $errno, $errstr, $timeout);
+        try {
+            $file = fsockopen ($domain, $port, $errno, $errstr, $timeout);
+        } catch(\Exception $e) {
+            $file = false;
+            //\Yii::$app->session->setFlash('danger', \Yii::t('app','Could not open the remote site on port {0}.', [$port]));
+        }
 		$stoptime  = microtime(true);
 		$status    = 0;
 
-		if (!$file) $status = -1;  // Site is down
+		if (!$file) $status = 0;  // Site is down
 		else {
 			fclose($file);
 			$status = ($stoptime - $starttime) * 1000;
 			$status = floor($status);
 		}
 
-        return $status > -1 ? false : true;
+        return $status > 0 ? $status : false ;
 	}
 }
