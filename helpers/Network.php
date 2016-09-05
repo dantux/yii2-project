@@ -122,4 +122,48 @@ class Network
 
         return $status > 0 ? $status : false ;
 	}
+
+    public static function isUrlResponding($url)
+    {
+        $goodCodes = ['200','201','202','204','302','301','303'];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
+
+        curl_exec($ch);
+        if(!curl_error($ch))
+            $return_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        else
+            $return_code = curl_error($ch);
+
+        if(in_array($return_code, $goodCodes))
+            return true;
+        else
+            return false;
+    }
+
+    public static function urlResponseCode($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
+
+        curl_exec($ch);
+        if(!curl_error($ch))
+            $return_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        else
+            $return_code = curl_error($ch);
+
+        curl_close($ch);
+        return $return_code;
+    }
+
 }
