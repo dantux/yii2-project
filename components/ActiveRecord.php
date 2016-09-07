@@ -31,4 +31,16 @@ class ActiveRecord extends \yii\db\ActiveRecord
         }
         return $result;
     }
+
+    /**
+     * Write in sessions alert messages
+     * @param string $type error or success
+     * @param string $message alert body
+     */
+    public function flash($type, $message)
+    {
+        Yii::$app->getSession()->setFlash($type=='error'?'danger':$type, $message);
+    }
+
+
 }
