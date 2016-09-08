@@ -287,4 +287,11 @@ class Text
        return $string;
     }
 
+
+    public static function getUniqueCode($length = 8)
+    {
+        return substr(hexdec(substr(md5(microtime()), 0, 15)), 0, $length);
+    }
+
+
 }
