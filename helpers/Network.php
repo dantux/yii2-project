@@ -102,25 +102,18 @@ class Network
 		}
 	}
 
-	public static function remoteResponds($domain, int $port = 80, $timeout = 10){
-		$starttime = microtime(true);
-        try {
-            $file = fsockopen ($domain, $port, $errno, $errstr, $timeout);
-        } catch(\Exception $e) {
-            $file = false;
-            //\Yii::$app->session->setFlash('danger', \Yii::t('app','Could not open the remote site on port {0}.', [$port]));
+	public static function remoteResponds($domain, int $port = 80, $timeout = 10000)
+    {
+
+        try 
+        {
+            $fp = stream_socket_client("tcp://${domain}:${port}", $errno, $errstr, $timeout);
+            fclose($fp);
+            return true;
+        } 
+        catch (\Exception $e) {
+            return false;
         }
-		$stoptime  = microtime(true);
-		$status    = 0;
-
-		if (!$file) $status = 0;  // Site is down
-		else {
-			fclose($file);
-			$status = ($stoptime - $starttime) * 1000;
-			$status = floor($status);
-		}
-
-        return $status > 0 ? $status : false ;
 	}
 
     public static function isUrlResponding($url)
