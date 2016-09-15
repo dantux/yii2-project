@@ -102,12 +102,11 @@ class Network
 		}
 	}
 
-	public static function remoteResponds($domain, int $port = 80, $timeout = 10000)
+	public static function remoteResponds($domain, int $port = 80, $protocol = 'tcp' $timeout = 10000)
     {
-
         try 
         {
-            $fp = stream_socket_client("tcp://${domain}:${port}", $errno, $errstr, $timeout);
+            $fp = stream_socket_client("${protocol}://${domain}:${port}", $errno, $errstr, $timeout);
             fclose($fp);
             return true;
         } 
