@@ -1,5 +1,5 @@
 <?php
-namespace dantux\project\components;
+namespace app\components;
 
 /**
  * Base active record class for project models
@@ -7,16 +7,24 @@ namespace dantux\project\components;
  */
 class ActiveRecord extends \yii\db\ActiveRecord
 {
+
     /** @var string  */
     public static $SLUG_PATTERN = '/^[0-9a-z-]{0,128}$/';
 
-    /**
-     * Get active query
-     * @return ActiveQuery
-     */
-    public static function find()
+    public function beforeSave($insert)
     {
-        return new ActiveQuery(get_called_class());
+        if (parent::beforeSave($insert)) {
+            // Check if database is writable
+            if($this->attemptDBWrite())
+                return true;
+            else
+            {
+                \Yii::$app->getSession()->setFlash('error', 'Database is not writable by the application user');
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -39,8 +47,24 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function flash($type, $message)
     {
-        Yii::$app->getSession()->setFlash($type=='error'?'danger':$type, $message);
+        if($type == 'danger')
+            $type = 'error';
+        if($type == 'notice')
+            $type = 'info';
+
+        \Yii::$app->getSession()->setFlash($type, $message);
     }
 
+    public function attemptDBWrite()
+    {
+        try {
+            $connection = \Yii::$app->db;
+            return true;
+
+        } catch (\yii\db\Exception $e) {
+            \Yii::$app->getSession()->setFlash('error', var_dump($e));
+            return false;
+        }
+    }
 
 }

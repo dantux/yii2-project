@@ -162,43 +162,6 @@ class Image
         return ($v1);
     }
 
-    public static function imageResizeHeight($file_path = '', $height = '50')
-    {
-        $full_file_name = basename($file_path);
-        $extension = get_extension($full_file_name);
-        $file_name = basename($file_path, ".$extension");
-        $output_file = IMG_DIR.DS.'imagecache'.DS.$file_name.'_'.$height.'px.'.$extension;
-        $output_url = IMG_URL.DS.'imagecache/'.$file_name.'_'.$height.'px.'.$extension;
-        if(!file_exists($output_file))
-        {
-            require_once('SimpleImage.php');
-            $image = new SimpleImage(); 
-            $image->load($file_path); 
-            $image->resizeToHeight($height); 
-            $image->save($output_file);
-        }
-        return $output_url;
-    }
-
-
-    public static function imageResizeWidth($file_path = '', $width = '50', $height='50')
-    {
-        $full_file_name = basename($file_path);
-        $extension = get_extension($full_file_name);
-        $file_name = basename($file_path, ".$extension");
-        $output_file = IMG_DIR.DS.'imagecache'.DS.$file_name.'_'. $height.'px.'.$extension;
-        $output_url = IMG_URL.DS.'imagecache/'.$file_name.'_'.$height.'px.'.$extension;
-        if(!file_exists($output_file))
-        {
-            require_once('SimpleImage.php');
-            $image = new SimpleImage(); 
-            $image->load($file_path); 
-            $image->resizeToWidth($width); 
-            $image->save($output_file);
-        }
-        return $output_url;
-    }
-
     public static function randomColorHex()
     {
         $hex1 = str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
@@ -229,4 +192,50 @@ class Image
         $max = sizeof($hex_values) - 1;
         return rand(0, $hex_values[$max]);
     }
+
+    public static function image_MD5($path, $width, $height, $rotate)
+    {
+        return md5($path . $width . $height . $rotate);
+    }
+
+    public static function imageUrl($imagePath, $width = null, $height = null, $rotate = 0, $background = '#2a2c2e')
+    {
+        // Use a default image if none exists
+        if(!is_file($imagePath) ||  !preg_match('/image/', mime_content_type($imagePath)))
+            $imagePath = \Yii::getAlias('@baseWebPath').'/images/default_image.jpg';
+
+        // Create the destination folder if doesn't exist 
+        if(!file_exists(\Yii::getAlias('@assets').'/image_cache'))
+            mkdir(\Yii::getAlias('@assets').'/image_cache');
+
+        // Generate the final file name
+        $finalImage = \Yii::getAlias('@assets').'/image_cache/'. self::image_MD5($imagePath,$width,$height,$rotate).'.jpg';
+
+        if(!is_file($finalImage))
+        {
+            // Using: https://github.com/yurkinx/yii2-image
+
+            $image = \Yii::$app->image->load($imagePath);
+            $image->resize($width,$height, \yii\image\drivers\Image::ADAPT)->background($background)->rotate($rotate)->save($finalImage);
+        }
+     
+        #$image->resize($width = NULL, $height = NULL, $master = NULL);
+        #$image->crop($width, $height, $offset_x = NULL, $offset_y = NULL);
+        #$image->sharpen($amount);
+        #$image->rotate($degrees);
+        #$image->save($file = NULL, $quality = 100);
+        #$image->render($type = NULL, $quality = 100);
+        #$image->reflection($height = NULL, $opacity = 100, $fade_in = FALSE);
+        #$image->flip($direction);
+        #$image->background($color, $opacity = 100);
+        #$image->watermark(Image $watermark, $offset_x = NULL, $offset_y = NULL, $opacity = 100);
+        #
+        #Using resize with resize constrains
+        #
+        #$image->resize($width, $height, \yii\image\drivers\Image::HEIGHT);
+        #$image->resize($width, $height, \yii\image\drivers\Image::ADAPT)->background('#fff');
+
+       return \Yii::getAlias('@web').'/assets/image_cache/'.basename($finalImage);
+    }
+
 }
