@@ -1,7 +1,5 @@
 <?php
 
-use \Yii;
-
 namespace dantux\helpers;
 
 
@@ -198,7 +196,7 @@ class Image
         return md5($path . $width . $height . $rotate);
     }
 
-    public static function imageUrl($imagePath, $width = null, $height = null, $rotate = 0, $background = '#2a2c2e')
+    public static function imageUrl($imagePath, $width = null, $height = null, $rotate = 0, $background = '#FFF', $quality = 95)
     {
         // Use a default image if none exists
         if(!is_file($imagePath) ||  !preg_match('/image/', mime_content_type($imagePath)))
@@ -209,14 +207,14 @@ class Image
             mkdir(\Yii::getAlias('@assets').'/image_cache');
 
         // Generate the final file name
-        $finalImage = \Yii::getAlias('@assets').'/image_cache/'. self::image_MD5($imagePath,$width,$height,$rotate).'.jpg';
+        $finalImage = \Yii::getAlias('@assets').'/image_cache/'. self::image_MD5($imagePath,$width,$height,$rotate,$quality).'.jpg';
 
         if(!is_file($finalImage))
         {
             // Using: https://github.com/yurkinx/yii2-image
 
             $image = \Yii::$app->image->load($imagePath);
-            $image->resize($width,$height, \yii\image\drivers\Image::ADAPT)->background($background)->rotate($rotate)->save($finalImage);
+            $image->resize($width,$height, \yii\image\drivers\Image::ADAPT)->background($background)->rotate($rotate)->save($finalImage, $quality);
         }
      
         #$image->resize($width = NULL, $height = NULL, $master = NULL);

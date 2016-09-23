@@ -5,7 +5,7 @@ use \Yii;
 namespace dantux\helpers;
 
 
-class File
+class FileHelper
 {
     public static function get_extension($filename) {
         $pos_last_dot = strrpos($filename,".");
@@ -73,6 +73,16 @@ class File
             // return success
             return true;
         }
+    }
+
+    public static function isEmpty($path)
+    {
+        $isEmpty = true;
+
+        if(is_file($path) && trim(file_get_contents($path)) != false)
+            $isEmpty = false;
+
+        return $isEmpty;
     }
 
 }
