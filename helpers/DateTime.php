@@ -779,4 +779,32 @@ class DateTime
         list($h, $m, $s) = explode(":", $time);
         return ($h * 60 * 60) + ($m * 60) + $s;
     }
+
+    public static function secondsToTime($seconds) 
+    {
+        if($seconds < 60) 
+        {
+            if($seconds < 10) { $seconds = "0".$seconds; }
+            return "00:00:".$seconds;
+        } else if($seconds < 3600) {
+            $minutes = $seconds / 60;
+            $min = floor($minutes);
+            $sec = $seconds - ($min * 60);
+            if($min < 10) { $min = "0".$min; }
+            if($sec < 10) { $sec = "0".$sec; }
+            return "00:".$min+":".$sec;
+        } else {
+            $hours = $seconds / 3600;
+            $hour = floor($hours);
+            $seconds = $seconds - ($hour * 3600);
+            $minutes = $seconds / 60;
+            $min = floor($minutes);
+            $sec = $seconds - ($min * 60);
+            if($hour < 10) { $hour = "0".$hour; }
+            if($min < 10) { $min = "0".$min; }
+            if($sec < 10) { $sec = "0".$sec; }
+            return $hour.":".$min.":".$sec;
+        }
+    }
+
 }
