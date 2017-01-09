@@ -127,9 +127,9 @@ class Image
                 $var_2 = ($l + $s) - ($s * $l);
 
             $var_1 = 2 * $l - $var_2;
-            $r = 255 * hue_2_rgb($var_1,$var_2,$h2 + (1 / 3));
-            $g = 255 * hue_2_rgb($var_1,$var_2,$h2);
-            $b = 255 * hue_2_rgb($var_1,$var_2,$h2 - (1 / 3));
+            $r = 255 * self::hue_2_rgb($var_1,$var_2,$h2 + (1 / 3));
+            $g = 255 * self::hue_2_rgb($var_1,$var_2,$h2);
+            $b = 255 * self::hue_2_rgb($var_1,$var_2,$h2 - (1 / 3));
         };
         $rhex = sprintf("%02X",round($r));
         $ghex = sprintf("%02X",round($g));
