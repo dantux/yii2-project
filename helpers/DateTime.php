@@ -1,6 +1,5 @@
 <?php
 
-use \Yii;
 
 namespace dantux\helpers;
 
@@ -792,7 +791,7 @@ class DateTime
             $sec = $seconds - ($min * 60);
             if($min < 10) { $min = "0".$min; }
             if($sec < 10) { $sec = "0".$sec; }
-            return "00:".$min+":".$sec;
+            return "00:".$min.":".$sec;
         } else {
             $hours = $seconds / 3600;
             $hour = floor($hours);
