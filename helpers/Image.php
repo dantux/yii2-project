@@ -54,6 +54,12 @@ class Image
 
         $hexcode = str_replace($to_strip, '', $hexcode);
 
+        // White and black return them right away:
+        if(strtolower($hexcode) == 'ffffff')
+            return '#000000';
+
+        if($hexcode == '000000')
+            return '#ffffff';
 
         $redhex  = substr($hexcode,0,2);
         $greenhex = substr($hexcode,2,2);
