@@ -25,4 +25,14 @@ class Data
     {
         return strtolower(substr(Yii::$app->language, 0, 2));
     }
+
+    public static function arraySortByColumn(&$arr, $col, $dir = SORT_ASC) {
+        $sort_col = array();
+        foreach ($arr as $key=> $row) {
+            $sort_col[$key] = $row[$col];
+        }
+
+        array_multisort($sort_col, $dir, $arr);
+
+    }
 }

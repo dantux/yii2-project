@@ -7,7 +7,7 @@ namespace dantux\helpers;
 
 class FileHelper
 {
-    public static function get_extension($filename) {
+    public static function getExtension($filename) {
         $pos_last_dot = strrpos($filename,".");
         if (!$pos_last_dot) { return ""; }
         $length_of_name = strlen($filename) - $pos_last_dot;
@@ -84,5 +84,24 @@ class FileHelper
 
         return $isEmpty;
     }
+
+    public static function isVideo($file_path)
+    {
+        if(preg_match('/video/', mime_content_type($file_path)))
+            return true;
+        else
+            return false;
+    }
+
+
+    public static function isImage($file_path)
+    {
+        if(preg_match('/image/', mime_content_type($file_path)))
+            return true;
+        else
+            return false;
+    }
+
+
 
 }
