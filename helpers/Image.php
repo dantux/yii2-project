@@ -239,7 +239,7 @@ class Image
         #$image->resize($width, $height, \yii\image\drivers\Image::HEIGHT);
         #$image->resize($width, $height, \yii\image\drivers\Image::ADAPT)->background('#fff');
 
-       return \Yii::getAlias('@web').'/assets/image_cache/'.basename($finalImage);
+       return \Yii::$app->request->baseUrl.'/assets/image_cache/'.basename($finalImage);
     }
 
 }
