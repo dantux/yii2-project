@@ -34,7 +34,7 @@ class Security
     {
         // format: algorithm:iterations:outputSize:salt:pbkdf2output
         if (!\is_string($password)) {
-            throw new InvalidArgumentException(
+            throw new Exception(
                 "create_hash(): Expected a string"
             );
         }
