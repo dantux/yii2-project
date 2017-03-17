@@ -34,7 +34,7 @@ class Security
     {
         // format: algorithm:iterations:outputSize:salt:pbkdf2output
         if (!\is_string($password)) {
-            throw new \Exception(
+            throw new \InvalidArgumentException(
                 "create_hash(): Expected a string"
             );
         }
@@ -52,7 +52,7 @@ class Security
             $salt_raw = \mcrypt_create_iv(self::PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM);
         }
         if ($salt_raw === false) {
-            throw new Exception(
+            throw new \Exception(
                 "Random number generator failed. Not safe to proceed."
             );
         }
@@ -85,37 +85,37 @@ class Security
     public static function verify_password($password, $hash)
     {
         if (!\is_string($password) || !\is_string($hash)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "verify_password(): Expected two strings"
             );
         }
         $params = \explode(":", $hash);
         if (\count($params) !== self::HASH_SECTIONS) {
-            throw new Exception(
+            throw new \Exception(
                 "Fields are missing from the password hash."
             );
         }
         $pbkdf2 = \base64_decode($params[self::HASH_PBKDF2_INDEX], true);
         if ($pbkdf2 === false) {
-            throw new Exception(
+            throw new \Exception(
                 "Base64 decoding of pbkdf2 output failed."
             );
         }
         $salt_raw = \base64_decode($params[self::HASH_SALT_INDEX], true);
         if ($salt_raw === false) {
-            throw new Exception(
+            throw new \Exception(
                 "Base64 decoding of salt failed."
             );
         }
         $storedOutputSize = (int) $params[self::HASH_SIZE_INDEX];
         if (self::ourStrlen($pbkdf2) !== $storedOutputSize) {
-            throw new Exception(
+            throw new \Exception(
                 "PBKDF2 output length doesn't match stored output length."
             );
         }
         $iterations = (int) $params[self::HASH_ITERATION_INDEX];
         if ($iterations < 1) {
-            throw new Exception(
+            throw new \Exception(
                 "Invalid number of iterations. Must be >= 1."
             );
         }
@@ -143,7 +143,7 @@ class Security
     public static function slow_equals($a, $b)
     {
         if (!\is_string($a) || !\is_string($b)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "slow_equals(): expected two strings"
             );
         }
@@ -178,17 +178,17 @@ class Security
     {
         // Type checks:
         if (!\is_string($algorithm)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "pbkdf2(): algorithm must be a string"
             );
         }
         if (!\is_string($password)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "pbkdf2(): password must be a string"
             );
         }
         if (!\is_string($salt)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "pbkdf2(): salt must be a string"
             );
         }
@@ -197,7 +197,7 @@ class Security
         $key_length += 0;
         $algorithm = \strtolower($algorithm);
         if (!\in_array($algorithm, \hash_algos(), true)) {
-            throw new Exception(
+            throw new \Exception(
                 "Invalid or unsupported hash algorithm."
             );
         }
@@ -207,12 +207,12 @@ class Security
             "ripemd160", "ripemd256", "ripemd320", "whirlpool"
         );
         if (!\in_array($algorithm, $ok_algorithms, true)) {
-            throw new Exception(
+            throw new \Exception(
                 "Algorithm is not a secure cryptographic hash function."
             );
         }
         if ($count <= 0 || $key_length <= 0) {
-            throw new Exception(
+            throw new \Exception(
                 "Invalid PBKDF2 parameters."
             );
         }
@@ -266,7 +266,7 @@ class Security
         }
         
         if (!\is_string($str)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "ourStrlen() expects a string"
             );
         }
@@ -274,7 +274,7 @@ class Security
         if ($exists) {
             $length = \mb_strlen($str, '8bit');
             if ($length === false) {
-                throw new Exception();
+                throw new \Exception();
             }
             return $length;
         } else {
@@ -297,7 +297,7 @@ class Security
         }
         // Type validation:
         if (!\is_string($str)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 "ourSubstr() expects a string"
             );
         }
