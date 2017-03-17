@@ -204,6 +204,7 @@ class Image
 
     public static function imageUrl($imagePath, $width = null, $height = null, $rotate = 0, $background = '#FFF', $quality = 95)
     {
+        ini_set("gd.jpeg_ignore_warning", 1);
         // Use a default image if none exists
         if(!is_file($imagePath) ||  !preg_match('/image/', mime_content_type($imagePath)))
             $imagePath = \Yii::getAlias('@baseWebPath').'/images/default_image.jpg';
