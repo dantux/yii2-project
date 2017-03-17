@@ -321,4 +321,9 @@ class Security
             return \substr($str, $start);
         }
     }
+
+    public static function randomString($length = 10)
+    {
+        return Yii::$app->getSecurity()->generateRandomString($length);
+    }
 }
