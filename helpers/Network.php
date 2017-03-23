@@ -102,7 +102,7 @@ class Network
 		}
 	}
 
-	public static function remoteResponds($domain, int $port = 80, $protocol = 'tcp', $timeout = 10000)
+	public static function remoteResponds($domain, $port = 80, $protocol = 'tcp', $timeout = 10000)
     {
         try 
         {
