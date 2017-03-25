@@ -49,7 +49,8 @@ class Security
                 $salt_raw = false;
             }
         } else {
-            $salt_raw = \mcrypt_create_iv(self::PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM);
+            //$salt_raw = \mcrypt_create_iv(self::PBKDF2_SALT_BYTES, MCRYPT_DEV_URANDOM);
+            $salt_raw = self::my_crypt_create(self::PBKDF2_SALT_BYTES);
         }
         if ($salt_raw === false) {
             throw new \Exception(
@@ -73,6 +74,16 @@ class Security
             \base64_encode($salt_raw) .
             ":" .
             \base64_encode($PBKDF2_Output);
+    }
+
+    /**
+      * If mcrypt_create_iv not available, use this:
+      *
+      */
+    public static function my_crypt_create($bytes)
+    {
+        $str = md5(time());
+        return substr($str, 0, $bytes);
     }
     
     /**

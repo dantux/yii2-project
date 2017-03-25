@@ -1,8 +1,8 @@
 <?php
 
-use \Yii;
-
 namespace dantux\helpers;
+
+use \Yii;
 
 class Unit
 {

@@ -1,9 +1,8 @@
 <?php
 
-use \Yii;
-
 namespace dantux\helpers;
 
+use \Yii;
 
 class FileHelper
 {

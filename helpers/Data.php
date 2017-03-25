@@ -1,4 +1,5 @@
 <?php
+
 namespace dantux\helpers;
 
 use Yii;
