@@ -55,7 +55,12 @@ class Image
         $hexcode = str_replace($to_strip, '', $hexcode);
 
         // White and black return them right away:
-        if(strtolower($hexcode) == 'ffffff')
+        if(
+                strtolower($hexcode) == 'ffffff' ||
+                strtolower($hexcode) == 'fffee0' ||
+                strtolower($hexcode) == 'ffffe0' ||
+                strtolower($hexcode) == 'fafad2' 
+          )
             return '#000000';
 
         if($hexcode == '000000')
