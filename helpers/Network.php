@@ -3,45 +3,53 @@
 namespace dantux\helpers;
 
 
+
 class Network
 {
 
-    public static function ip_info($address = 'google.com')
+    /**
+      *
+        // optional parameters: 
+
+            & fields = ip,location,security
+            & hostname = 1
+            & security = 1
+            & language = en
+            & callback = MY_CALLBACK
+            & output = json
+        */
+    public static function actionGetIpInfo($address = 'google.com')
     {
-        $url = "http://freegeoip.net/json/${address}";
+        $url = "http://api.ipstack.com/${address}?access_key=cde10baa6aa2e37446610c7c9a9168cc&format=1&hostname=1";
+        //$url = "https://json.geoiplookup.io/${address}";
         $curl = curl_init();
         curl_setopt ($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec ($curl);
-        curl_close ($curl);
         if(dantux\helpers\Text::isJson($result))
         {
-            return json_decode($result);
-            /*
-            '{"ip":"89.122.102.185","country_code":"RO","country_name":"Romania","region_code":"BV","region_name":"Judetul Brasov","city":"Fagaras","zip_code":"505200","time_zone":"Europe/Bucharest","latitude":45.85,"longitude":24.9667,"metro_code":0}';
-            $ip = $ip_info->ip;
-            $country_code = $ip_info->country_code;
-            $country_name = $ip_info->country_name;
-            $region_code = $ip_info->region_code;
-            $region_name = $ip_info->region_name;
-            $city = $ip_info->city;
-            $zip_code = $ip_info->zip_code;
-            $time_zone = $ip_info->time_zone;
-            $latitude = $ip_info->latitude;
-            $longitude = $ip_info->longitude;
-            $metro_code = $ip_info->metro_code;
-            foreach($ip_info as $key => $val)
-            {
-                echo $key . ' => ' . $val . "\n";
-            }
-            */
+            $ip_info = json_decode($result);
+            echo "IP: " . $ip_info->ip . "\n";
+            echo "Hostname: " . $ip_info->hostname . "\n";
+            echo "Continent Code: " . $ip_info->continent_code . "\n";
+            echo "Continent Name: " . $ip_info->continent_name . "\n";
+            echo "Country Code: " . $ip_info->country_code . "\n";
+            echo "Country Code: " . $ip_info->country_name . "\n";
+            echo "Region Code: " . $ip_info->region_code . "\n";
+            echo "Region Name: " . $ip_info->region_name . "\n";
+            echo "City: " . $ip_info->city . "\n";
+            echo "Zip: " . $ip_info->zip . "\n";
+            echo "Latitude: " . $ip_info->latitude . "\n";
+            echo "Longitude: " . $ip_info->longitude . "\n";
+            echo "Calling Code: " . $ip_info->location->calling_code . "\n";
+            echo "Geoname ID: " . $ip_info->location->geoname_id . "\n";
         }
         else
-        {
-            $not_found = '{"ip":"not_found","country_code":"not_found","country_name":"not_found","region_code":"not_found","region_name":"not_found","city":"not_found","zip_code":"not_found","time_zone":"not_found","latitude":0,"longitude":0,"metro_code":0}';
-            return json_decode($not_found);
-        }
+            echo var_dump($result);
+
+        curl_close ($curl);
     }
+
 
 	// Function to check response time
 	public static function pingDomain($domain, $port, $timeout, $log_output = 'none'){
@@ -251,7 +259,7 @@ class Network
     } 
 
     // Function to get the user IP address
-    public function getUserIP() {
+    public static function getUserIP() {
         $ipaddress = '';
         if (isset($_SERVER['HTTP_CLIENT_IP']))
             $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
