@@ -18,7 +18,7 @@ class Network
             & callback = MY_CALLBACK
             & output = json
         */
-    public static function actionGetIpInfo($address = 'google.com')
+    public static function getIpInfo($address = 'google.com')
     {
         $url = "http://api.ipstack.com/${address}?access_key=cde10baa6aa2e37446610c7c9a9168cc&format=1&hostname=1";
         //$url = "https://json.geoiplookup.io/${address}";
