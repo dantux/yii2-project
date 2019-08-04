@@ -41,34 +41,74 @@ class Image
             return false;
     }
 
-    public static function getOppositeColor($hexcode = '#FFFFFF')
+
+    public static function rgb2hex($rgb) {
+       $hex = "#";
+       $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+       $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+       $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+
+       return $hex; // returns the hex value including the number sign (#)
+    }
+
+    public static function getBestContrastColor($inputcolor = '#FFFFFF')
     {
-        // strip off chars that defines it as hexcode:
+        # First, if the input color is a named color, return the opposite
+        if(array_key_exists(strtolower($inputcolor), self::namedColors()))
+            $inputcolor = self::colorNameToHEX(strtolower($inputcolor));
+ 
+        // strip off chars that defines it as inputcolor:
+        $to_strip = array('#', '0x', '0X');
+        $inputcolor = str_replace($to_strip, '', $inputcolor);
+
+        $split = str_split($inputcolor, 2);
+
+        $r = hexdec($split[0]);
+        $g = hexdec($split[1]);
+        $b = hexdec($split[2]);
+
+        $contrast_r = ($r < 128) ? 255 : 0;
+        $contrast_g = ($g < 128) ? 255 : 0;
+        $contrast_b = ($b < 128) ? 255 : 0;
+        
+        return self::rgb2hex(array($contrast_r, $contrast_g, $contrast_b));
+
+    }
+
+
+    public static function getOppositeColor($inputcolor = '#FFFFFF')
+    {
+        
+        # First, if the input color is a named color, return the opposite
+        if(array_key_exists(strtolower($inputcolor), self::namedColors()))
+            $inputcolor = self::colorNameToHEX(strtolower($inputcolor));
+            
+        // strip off chars that defines it as inputcolor:
         $to_strip = '';
-        if(substr($hexcode, 0, 1) == '#')
+        if(substr($inputcolor, 0, 1) == '#')
             $to_strip = '#';
-        elseif(substr($hexcode, 0, 2) == '0x')
+        elseif(substr($inputcolor, 0, 2) == '0x')
             $to_strip = '0x';
-        elseif(substr($hexcode, 0, 2) == '0X')
+        elseif(substr($inputcolor, 0, 2) == '0X')
             $to_strip = '0X';
 
-        $hexcode = str_replace($to_strip, '', $hexcode);
+        $inputcolor = str_replace($to_strip, '', $inputcolor);
 
         // White and black return them right away:
         if(
-                strtolower($hexcode) == 'ffffff' ||
-                strtolower($hexcode) == 'fffee0' ||
-                strtolower($hexcode) == 'ffffe0' ||
-                strtolower($hexcode) == 'fafad2' 
+                strtolower($inputcolor) == 'ffffff' ||
+                strtolower($inputcolor) == 'fffee0' ||
+                strtolower($inputcolor) == 'ffffe0' ||
+                strtolower($inputcolor) == 'fafad2' 
           )
             return '#000000';
 
-        if($hexcode == '000000')
+        if($inputcolor == '000000')
             return '#ffffff';
 
-        $redhex  = substr($hexcode,0,2);
-        $greenhex = substr($hexcode,2,2);
-        $bluehex = substr($hexcode,4,2);
+        $redhex  = substr($inputcolor,0,2);
+        $greenhex = substr($inputcolor,2,2);
+        $bluehex = substr($inputcolor,4,2);
        // $var_r, $var_g and $var_b are the three decimal fractions to be input to our RGB-to-HSL conversion routine
 
         $var_r = (hexdec($redhex)) / 255;
@@ -76,7 +116,7 @@ class Image
         $var_b = (hexdec($bluehex)) / 255;
         // Input is $var_r, $var_g and $var_b from above
         // Output is HSL equivalent as $h, $s and $l — these are again expressed as fractions of 1, like the input values
-        // That is "Hue", "Saturation", "Luminosit"
+        // That is "Hue", "Saturation", "Luminosity"
 
         $var_min = min($var_r,$var_g,$var_b);
         $var_max = max($var_r,$var_g,$var_b);
@@ -246,6 +286,165 @@ class Image
         #$image->resize($width, $height, \yii\image\drivers\Image::ADAPT)->background('#fff');
 
        return \Yii::$app->request->baseUrl.'/assets/image_cache/'.basename($finalImage);
+    }
+
+    public static function namedColors()
+    {
+        return [
+            "aliceblue" => "#F0F8FF",
+            "antiquewhite" => "#FAEBD7",
+            "aqua" => "#00FFFF",
+            "aquamarine" => "#7FFFD4",
+            "azure" => "#F0FFFF",
+            "beige" => "#F5F5DC",
+            "bisque" => "#FFE4C4",
+            "black" => "#000000",
+            "blanchedalmond" => "#FFEBCD",
+            "blue" => "#0000FF",
+            "blueviolet" => "#8A2BE2",
+            "brown" => "#A52A2A",
+            "burlywood" => "#DEB887",
+            "cadetblue" => "#5F9EA0",
+            "chartreuse" => "#7FFF00",
+            "chocolate" => "#D2691E",
+            "coral" => "#FF7F50",
+            "cornflowerblue" => "#6495ED",
+            "cornsilk" => "#FFF8DC",
+            "crimson" => "#DC143C",
+            "cyan" => "#00FFFF",
+            "darkblue" => "#00008B",
+            "darkcyan" => "#008B8B",
+            "darkgoldenrod" => "#B8860B",
+            "darkgray" => "#A9A9A9",
+            "darkgreen" => "#006400",
+            "darkkhaki" => "#BDB76B",
+            "darkmagenta" => "#8B008B",
+            "darkolivegreen" => "#556B2F",
+            "darkorange" => "#FF8C00",
+            "darkorchid" => "#9932CC",
+            "darkred" => "#8B0000",
+            "darksalmon" => "#E9967A",
+            "darkseagreen" => "#8FBC8B",
+            "darkslateblue" => "#483D8B",
+            "darkslategray" => "#2F4F4F",
+            "darkturquoise" => "#00CED1",
+            "darkviolet" => "#9400D3",
+            "deeppink" => "#FF1493",
+            "deepskyblue" => "#00BFFF",
+            "dimgray" => "#696969",
+            "dodgerblue" => "#1E90FF",
+            "firebrick" => "#B22222",
+            "floralwhite" => "#FFFAF0",
+            "forestgreen" => "#228B22",
+            "fuchsia" => "#FF00FF",
+            "gainsboro" => "#DCDCDC",
+            "ghostwhite" => "#F8F8FF",
+            "gold" => "#FFD700",
+            "goldenrod" => "#DAA520",
+            "gray" => "#808080",
+            "green" => "#008000",
+            "greenyellow" => "#ADFF2F",
+            "honeydew" => "#F0FFF0",
+            "hotpink" => "#FF69B4",
+            "indianred" => "#CD5C5C",
+            "indigo" => "#4B0082",
+            "ivory" => "#FFFFF0",
+            "khaki" => "#F0E68C",
+            "lavender" => "#E6E6FA",
+            "lavenderblush" => "#FFF0F5",
+            "lawngreen" => "#7CFC00",
+            "lemonchiffon" => "#FFFACD",
+            "lightblue" => "#ADD8E6",
+            "lightcoral" => "#F08080",
+            "lightcyan" => "#E0FFFF",
+            "lightgoldenrodyellow" => "#FAFAD2",
+            "lightgray" => "#D3D3D3",
+            "lightgreen" => "#90EE90",
+            "lightpink" => "#FFB6C1",
+            "lightsalmon" => "#FFA07A",
+            "lightsalmon" => "#FFA07A",
+            "lightseagreen" => "#20B2AA",
+            "lightskyblue" => "#87CEFA",
+            "lightslategray" => "#778899",
+            "lightsteelblue" => "#B0C4DE",
+            "lightyellow" => "#FFFFE0",
+            "lime" => "#00FF00",
+            "limegreen" => "#32CD32",
+            "linen" => "#FAF0E6",
+            "magenta" => "#FF00FF",
+            "maroon" => "#800000",
+            "mediumaquamarine" => "#66CDAA",
+            "mediumblue" => "#0000CD",
+            "mediumorchid" => "#BA55D3",
+            "mediumpurple" => "#9370DB",
+            "mediumseagreen" => "#3CB371",
+            "mediumslateblue" => "#7B68EE",
+            "mediumslateblue" => "#7B68EE",
+            "mediumspringgreen" => "#00FA9A",
+            "mediumturquoise" => "#48D1CC",
+            "mediumvioletred" => "#C71585",
+            "midnightblue" => "#191970",
+            "mintcream" => "#F5FFFA",
+            "mistyrose" => "#FFE4E1",
+            "moccasin" => "#FFE4B5",
+            "navajowhite" => "#FFDEAD",
+            "navy" => "#000080",
+            "oldlace" => "#FDF5E6",
+            "olive" => "#808000",
+            "olivedrab" => "#6B8E23",
+            "orange" => "#FFA500",
+            "orangered" => "#FF4500",
+            "orchid" => "#DA70D6",
+            "palegoldenrod" => "#EEE8AA",
+            "palegreen" => "#98FB98",
+            "paleturquoise" => "#AFEEEE",
+            "palevioletred" => "#DB7093",
+            "papayawhip" => "#FFEFD5",
+            "peachpuff" => "#FFDAB9",
+            "peru" => "#CD853F",
+            "pink" => "#FFC0CB",
+            "plum" => "#DDA0DD",
+            "powderblue" => "#B0E0E6",
+            "purple" => "#800080",
+            "rebeccapurple" => "#663399",
+            "red" => "#FF0000",
+            "rosybrown" => "#BC8F8F",
+            "royalblue" => "#4169E1",
+            "saddlebrown" => "#8B4513",
+            "salmon" => "#FA8072",
+            "sandybrown" => "#F4A460",
+            "seagreen" => "#2E8B57",
+            "seashell" => "#FFF5EE",
+            "sienna" => "#A0522D",
+            "silver" => "#C0C0C0",
+            "skyblue" => "#87CEEB",
+            "slateblue" => "#6A5ACD",
+            "slategray" => "#708090",
+            "snow" => "#FFFAFA",
+            "springgreen" => "#00FF7F",
+            "steelblue" => "#4682B4",
+            "tan" => "#D2B48C",
+            "teal" => "#008080",
+            "thistle" => "#D8BFD8",
+            "tomato" => "#FF6347",
+            "turquoise" => "#40E0D0",
+            "violet" => "#EE82EE",
+            "wheat" => "#F5DEB3",
+            "white" => "#FFFFFF",
+            "whitesmoke" => "#F5F5F5",
+            "yellow" => "#FFFF00",
+            "yellowgreen" => "#9ACD32",
+            ];
+    }
+
+    public static function colorNameToHEX($color_name)
+    {
+        $colors = self::namedColors(); 
+
+        if( array_key_exists($color_name, $colors) )
+            return $colors[$color_name];
+        else
+            return '#000000';
     }
 
 }
