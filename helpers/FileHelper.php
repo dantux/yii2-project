@@ -101,6 +101,20 @@ class FileHelper
             return false;
     }
 
+    public static function convert_file_to_utf8($source, $target) {
+        $content=file_get_contents($source);
+        # detect original encoding
+        $original_encoding=mb_detect_encoding($content, "UTF-8, ISO-8859-1, ISO-8859-15", true);
+        # now convert
+        if ($original_encoding!='UTF-8') {
+            $content=mb_convert_encoding($content, 'UTF-8', $original_encoding);
+
+        }
+        if(file_put_contents($target, $content))
+            return true;
+        else
+            return false;
+    }
 
 
 }
