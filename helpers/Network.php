@@ -26,28 +26,31 @@ class Network
         curl_setopt ($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec ($curl);
+        $to_return = "";
         if(\dantux\helpers\Text::isJson($result))
         {
             $ip_info = json_decode($result);
-            echo "IP: " . $ip_info->ip . "\n";
-            echo "Hostname: " . $ip_info->hostname . "\n";
-            echo "Continent Code: " . $ip_info->continent_code . "\n";
-            echo "Continent Name: " . $ip_info->continent_name . "\n";
-            echo "Country Code: " . $ip_info->country_code . "\n";
-            echo "Country Code: " . $ip_info->country_name . "\n";
-            echo "Region Code: " . $ip_info->region_code . "\n";
-            echo "Region Name: " . $ip_info->region_name . "\n";
-            echo "City: " . $ip_info->city . "\n";
-            echo "Zip: " . $ip_info->zip . "\n";
-            echo "Latitude: " . $ip_info->latitude . "\n";
-            echo "Longitude: " . $ip_info->longitude . "\n";
-            echo "Calling Code: " . $ip_info->location->calling_code . "\n";
-            echo "Geoname ID: " . $ip_info->location->geoname_id . "\n";
+            $to_return .= "IP: " . $ip_info->ip . "\n";
+            $to_return .= "Hostname: " . $ip_info->hostname . "\n";
+            $to_return .= "Continent Code: " . $ip_info->continent_code . "\n";
+            $to_return .= "Continent Name: " . $ip_info->continent_name . "\n";
+            $to_return .= "Country Code: " . $ip_info->country_code . "\n";
+            $to_return .= "Country Code: " . $ip_info->country_name . "\n";
+            $to_return .= "Region Code: " . $ip_info->region_code . "\n";
+            $to_return .= "Region Name: " . $ip_info->region_name . "\n";
+            $to_return .= "City: " . $ip_info->city . "\n";
+            $to_return .= "Zip: " . $ip_info->zip . "\n";
+            $to_return .= "Latitude: " . $ip_info->latitude . "\n";
+            $to_return .= "Longitude: " . $ip_info->longitude . "\n";
+            $to_return .= "Calling Code: " . $ip_info->location->calling_code . "\n";
+            $to_return .= "Geoname ID: " . $ip_info->location->geoname_id . "\n";
         }
         else
-            echo var_dump($result);
+            $to_return .= var_dump($result);
 
         curl_close ($curl);
+
+        return $to_return;
     }
 
     /** 
