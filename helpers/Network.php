@@ -26,7 +26,7 @@ class Network
         curl_setopt ($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec ($curl);
-        if(dantux\helpers\Text::isJson($result))
+        if(\dantux\helpers\Text::isJson($result))
         {
             $ip_info = json_decode($result);
             echo "IP: " . $ip_info->ip . "\n";
@@ -49,6 +49,35 @@ class Network
 
         curl_close ($curl);
     }
+
+    /** 
+      * Returns country code
+      *
+    */
+    public static function detectedCountry()
+    {
+        $address = Network::getUserIP();
+        $url = "http://api.ipstack.com/${address}?access_key=cde10baa6aa2e37446610c7c9a9168cc&format=1&hostname=1";
+        $curl = curl_init();
+        curl_setopt ($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $result = curl_exec ($curl);
+
+        if(\dantux\helpers\Text::isJson($result))
+        {
+            $ip_info = json_decode($result);
+            //$code = $ip_info->country_code;
+            $code = var_dump($ip_info);
+        }
+        else
+            $code = 'xx-XX';
+
+        curl_close ($curl);
+
+        return $code;
+    }
+
+
 
 
 	// Function to check response time
