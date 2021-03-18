@@ -18,14 +18,20 @@ class Network
             & callback = MY_CALLBACK
             & output = json
         */
-    public static function getIpInfo($address = 'google.com')
+    public static function getIpInfoOLD($showAll = true, $address = null)
     {
+        if(null === $address)
+            $address = Network::getUserIP();
+
         $url = "http://api.ipstack.com/${address}?access_key=cde10baa6aa2e37446610c7c9a9168cc&format=1&hostname=1";
         //$url = "https://json.geoiplookup.io/${address}";
         $curl = curl_init();
         curl_setopt ($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec ($curl);
+        if($showAll)
+            return $result;
+
         $to_return = "";
         if(\dantux\helpers\Text::isJson($result))
         {
@@ -53,6 +59,51 @@ class Network
         return $to_return;
     }
 
+
+    public static function getIpInfo($showAll = true, $address = null)
+    {
+        if(null === $address)
+            $address = Network::getUserIP();
+
+        $url ="http://www.geoplugin.net/json.gp?ip=${address}";
+        $curl = curl_init();
+        curl_setopt ($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $result = curl_exec ($curl);
+        if($showAll)
+            return $result;
+
+        $to_return = "";
+        if(\dantux\helpers\Text::isJson($result))
+        {
+            return "to be developed";
+            /*
+            $ip_info = json_decode($result);
+            $to_return .= "IP: " . $ip_info->ip . "\n";
+            $to_return .= "Hostname: " . $ip_info->hostname . "\n";
+            $to_return .= "Continent Code: " . $ip_info->continent_code . "\n";
+            $to_return .= "Continent Name: " . $ip_info->continent_name . "\n";
+            $to_return .= "Country Code: " . $ip_info->country_code . "\n";
+            $to_return .= "Country Code: " . $ip_info->country_name . "\n";
+            $to_return .= "Region Code: " . $ip_info->region_code . "\n";
+            $to_return .= "Region Name: " . $ip_info->region_name . "\n";
+            $to_return .= "City: " . $ip_info->city . "\n";
+            $to_return .= "Zip: " . $ip_info->zip . "\n";
+            $to_return .= "Latitude: " . $ip_info->latitude . "\n";
+            $to_return .= "Longitude: " . $ip_info->longitude . "\n";
+            $to_return .= "Calling Code: " . $ip_info->location->calling_code . "\n";
+            $to_return .= "Geoname ID: " . $ip_info->location->geoname_id . "\n";
+            */
+        }
+        else
+            $to_return .= var_dump($result);
+
+        curl_close ($curl);
+
+        return $to_return;
+    }
+
+
     /** 
       * Returns country code
       *
@@ -60,7 +111,8 @@ class Network
     public static function detectedCountry()
     {
         $address = Network::getUserIP();
-        $url = "http://api.ipstack.com/${address}?access_key=cde10baa6aa2e37446610c7c9a9168cc&format=1&hostname=1";
+        //$url = "http://api.ipstack.com/${address}?access_key=cde10baa6aa2e37446610c7c9a9168cc&format=1&hostname=1";
+        $url ="http://www.geoplugin.net/json.gp?ip=${address}";
         $curl = curl_init();
         curl_setopt ($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -70,7 +122,8 @@ class Network
         {
             $ip_info = json_decode($result);
             //$code = $ip_info->country_code;
-            $code = var_dump($ip_info);
+            $code = $ip_info->geoplugin_countryCode;
+            //$code = var_dump($ip_info);
         }
         else
             $code = 'xx-XX';
